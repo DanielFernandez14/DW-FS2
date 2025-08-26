@@ -76,6 +76,25 @@ const Home = () => {
     return () => { cancel = true; };
   }, [prefersReduced]);
 
+  /* ========= Typewriter para “Bienvenido a DancoWeb” ========= */
+  const heroTitle = "¡Bienvenido!";
+  const heroChars = heroTitle.length;
+  const heroRef = useRef(null);
+  useEffect(() => {
+    const el = heroRef.current;
+    if (!el) return;
+    if (prefersReduced) {
+      el.style.setProperty("--hn", heroChars);
+      return;
+    }
+    const controls = animate(
+      el,
+      { "--hn": [0, heroChars] },
+      { duration: 2.2, easing: `steps(${heroChars})`, delay: 0.25 }
+    );
+    return () => controls?.cancel();
+  }, [prefersReduced]);
+
   const d = prefersReduced ? 0 : 0.6;
   const ease = [0.22, 1, 0.36, 1];
 
@@ -83,6 +102,8 @@ const Home = () => {
     <Layout>
       {/* ====== Estilo global del Home (dark-hacking + fondo unificado con degradé) ====== */}
       <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700;800&display=swap');
+
         :root{
           --surface: var(--bg);
           --muted: color-mix(in srgb, var(--text) 68%, var(--bg) 32%);
@@ -247,10 +268,117 @@ const Home = () => {
         .brand-sub{ color: var(--muted) }
         .contact-highlight{ outline: 2px solid transparent; border-radius: 16px; }
 
-        @media (prefers-reduced-motion: reduce){
-          .scanline, .rain, .rain2{ animation: none !important }
-          [data-speed]{ transform:none !important }
+        /* ====== SALUDO: contenedor centrado y typewriter que no sobrepasa ====== */
+        .greet-wrap{
+          position: relative;
+          margin-inline: auto;
+          width: min(96vw, 1100px);
+          max-width: 100%;
+          box-sizing: border-box;
+          justify-content: center;
+          text-align: center;
+          padding: clamp(1rem, 5vw, 5rem) clamp(1.2rem, 7vw, 8rem);
+          border: none !important;
+          overflow: hidden;
+          backdrop-filter: blur(6px);
         }
+        .greet-wrap::after{
+          content:"";
+          position:absolute; inset:0; pointer-events:none;
+          background: linear-gradient(90deg, transparent 0, rgba(255,255,255,.16) 50%, transparent 100%);
+          mix-blend-mode: screen;
+          width: 40%;
+          left:-40%;
+          animation: greetSweep 3.2s ease-in-out infinite;
+          opacity:.35;
+        }
+        @keyframes greetSweep{
+          0%{ transform: skewX(-12deg) translateX(0) }
+          60%{ transform: skewX(-12deg) translateX(320%) }
+          100%{ transform: skewX(-12deg) translateX(320%) }
+        }
+
+        /* Typewriter: revela por ancho en ch pero limitado a 100% */
+        /* Permite que el contenedor del texto+caret pueda achicarse en flex */
+.greet-wrap > div{ min-width: 0; }
+
+/* Typewriter responsive que NO sobrepasa el pill */
+.hero-greet{
+  --ls: .04em;                /* mismo letter-spacing del diseño */
+  --safety: .9ch;             /* reserva para caret + gap (ajusta en mobile) */
+
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-weight: 800;
+  line-height: 1.52;
+  font-size: clamp(2rem, 5vw, 5rem);
+  letter-spacing: var(--ls);
+  text-shadow: 0 2px 20px color-mix(in srgb, var(--accent) 40%, transparent);
+  white-space: nowrap;
+  display: inline-block;
+
+  /* ancho = texto (1ch por char + spacing) limitado a (100% - reserva) */
+  width: clamp(0px,
+               calc(var(--hn, 0) * 1ch + (var(--hn, 0) - 1) * var(--ls)),
+               calc(100% - var(--safety)));
+  max-width: 100%;
+  padding-right: .9ch;       /* pequeño colchón interno */
+  box-sizing: border-box;
+  overflow: hidden;
+  position: relative;
+  will-change: width;
+}
+
+/* brillo de barrido */
+.hero-greet::after{
+  content:"";
+  position:absolute; top:0; bottom:0; left:-15%;
+  width: 15%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent);
+  mix-blend-mode: screen;
+  animation: greetShine 2.8s linear infinite;
+  opacity:.45;
+}
+@keyframes greetShine{
+  0%{ transform: translateX(0) }
+  100%{ transform: translateX(700%) }
+}
+
+/* Caret: no empuja el texto y mantiene el ritmo */
+.caret-hero{
+  margin-left: .25ch;         /* separa del último carácter */
+  display:inline-block; width:.08em; height:1em;
+  vertical-align:-.08em;
+  background: var(--text);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--accent2) 65%, transparent);
+  border-radius:2px;
+  animation: blink 1s steps(2,end) infinite;
+  flex: 0 0 auto;
+}
+
+/* Mobile: ajusta tracking y reserva para encajar perfecto */
+@media (max-width: 520px){
+  .hero-greet{
+    --ls: .025em;
+    --safety: .7ch;
+    font-size: clamp(1.3rem, 5.2vw, 2rem);
+  }
+  .greet-wrap{ padding: .9rem 1.1rem; gap:.5rem; }
+}
+
+/* Respeta preferencias de movimiento */
+@media (prefers-reduced-motion: reduce){
+  .scanline, .rain, .rain2, .greet-wrap::after, .hero-greet::after{ animation: none !important }
+  [data-speed]{ transform:none !important }
+}
+
+
+          /* Subir el saludo dentro del héroe (solo esto) */
+.hero.is-neo .hero-body{
+  padding-top: clamp(7rem, 6vh, 2rem);     /* ↑ menos aire arriba */
+  padding-bottom: clamp(7rem, 5vh, 1.2rem);/* ↓ un poco menos abajo para equilibrar 
+  marginTop: "clamp(-.5rem, -2vh, -1.25rem)"*/
+}
+
       `}</style>
 
       {/* Fondo unificado global */}
@@ -274,39 +402,67 @@ const Home = () => {
 
           <div className="hero-body has-text-centered">
             <motion.div
+              className="greet-wrap"
               initial={{ opacity: 0, y: prefersReduced ? 0 : 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: d, ease, delay: 0.02 }}
               style={{
                 display: "inline-flex",
-                alignItems: "center",
+                alignItems: "center",             // centrado vertical correcto
                 gap: ".55rem",
-                padding: ".46rem .78rem",
+                padding: "clamp(1rem, 5vw, 6rem) clamp(1.2rem, 7vw, 8rem)",
                 borderRadius: "999px",
                 background: "color-mix(in srgb, var(--accent) 10%, transparent)",
-                border: "1px solid color-mix(in srgb, var(--accent2) 45%, transparent)",
                 boxShadow: "0 12px 36px color-mix(in srgb, var(--accent) 32%, transparent)",
                 fontWeight: 800,
                 letterSpacing: ".06em",
                 textTransform: "uppercase",
                 color: "var(--text)",
+                justifyContent: "center",
+                width: "min(96vw, 1100px)",
+                maxWidth: "100%",
+                overflow: "hidden",
               }}
             >
               <span
                 aria-hidden="true"
                 style={{
-                  width: ".55rem", height: ".55rem", borderRadius: "50%",
-                  background: "radial-gradient(circle at 30% 30%, #fff, var(--accent) 45%, transparent 70%)",
+                  width: ".55rem", height: ".55rem", borderRadius: "45%",
+                  background: "radial-gradient(circle at 30% 30%, #ffffffff, var(--accent) 45%, transparent 70%)",
                   boxShadow: "0 0 16px var(--accent2)",
+                  flex: "0 0 auto",
                 }}
               />
-              DancoWeb / NeoStack
+              {/* === Texto con Typewriter (Motion) + caret === */}
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: ".18em",
+                  whiteSpace: "nowrap",
+                  maxWidth: "100%",
+                  overflow: "hidden",              // el caret tampoco sobrepasa
+                }}
+              >
+                <motion.span ref={heroRef} className="hero-greet" style={{ ["--hn"]: 0 }}>
+                  {heroTitle}
+                </motion.span>
+                {!prefersReduced && (
+                  <motion.span
+                    className="caret-hero"
+                    aria-hidden="true"
+                    animate={{ opacity: [1, 0, 1] }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  />
+                )}
+              </div>
             </motion.div>
 
+            {/* ======= TÍTULO CAMBIADO (solo texto) ======= */}
             <motion.h1
-              className="title is-1 mt-3 glitch"
-              data-text="Web futurista metalizada, rápida y accesible"
+              className="title is-2 mt-3 glitch"
+              data-text="Desarrollamos tus ideas y las hacemos tu web."
               initial={{ opacity: 0, y: prefersReduced ? 0 : 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -320,8 +476,7 @@ const Home = () => {
                 textShadow: "0 6px 30px color-mix(in srgb, var(--accent) 26%, transparent)",
               }}
             >
-              Web <span style={{ color: "var(--accent2)" }}>futurista</span> metalizada,{" "}
-              <span style={{ color: "var(--accent)" }}>rápida</span> y accesible
+              Desarrollamos tus ideas y las hacemos tu web.
             </motion.h1>
 
             <motion.p
@@ -331,7 +486,7 @@ const Home = () => {
               viewport={{ once: true }}
               transition={{ duration: d, delay: 0.14 }}
             >
-              UX/UI dark-hacking azul metal. Performance real, código limpio y respeto por tu tema.
+              En Danco Web, tu visión es nuestra misión. Performance real, código limpio y respeto por tu tema.
             </motion.p>
 
             <motion.div
@@ -435,12 +590,7 @@ const Home = () => {
                     }
                     onViewportEnter={(entry) => {
                       if (prefersReduced) return;
-                      // Una “vuelta” suave al aparecer (solo 1 vez)
-                      animate(
-                        entry.target,
-                        { rotateY: [0, 360, 0] },
-                        { duration: 1.25, easing: "cubic-bezier(.22,1,.36,1)" }
-                      );
+                      animate(entry.target, { rotateY: [0, 360, 0] }, { duration: 1.25, easing: "cubic-bezier(.22,1,.36,1)" });
                     }}
                     style={{
                       outline: card.hl ? "1px solid color-mix(in srgb, var(--accent2) 35%, transparent)" : undefined,
@@ -568,7 +718,6 @@ const Home = () => {
                     }
                     onViewportEnter={(entry) => {
                       if (prefersReduced) return;
-                      // medio giro “extraño” al aparecer
                       animate(entry.target, { rotateX: [0, 360, 0] }, { duration: 1.2, easing: "cubic-bezier(.22,1,.36,1)" });
                     }}
                   >
