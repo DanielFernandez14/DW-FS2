@@ -379,6 +379,33 @@ const Home = () => {
   marginTop: "clamp(-.5rem, -2vh, -1.25rem)"*/
 }
 
+.services-unified{
+  position:relative;
+  width:100%;
+  padding: clamp(4rem,8vw,6rem) clamp(1rem,5vw,3rem);
+  text-align:center;
+  overflow:hidden;
+}
+.services-unified::before{
+  content:"";
+  position:absolute; inset:0; z-index:-1;
+  background: radial-gradient(60% 40% at 50% 0%, color-mix(in srgb,var(--accent) 10%,transparent),transparent 70%),
+              linear-gradient(180deg, color-mix(in srgb,var(--bg) 90%,transparent), transparent 100%);
+}
+.service-tilt{
+  border-radius:18px;
+  border:1px solid var(--edge);
+  background: color-mix(in srgb,var(--panel-glass) 75%,transparent);
+  backdrop-filter: blur(6px);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.service-tilt:hover{
+  box-shadow:0 28px 90px color-mix(in srgb,var(--accent2) 40%,transparent);
+}
+
+
+
+
       `}</style>
 
       {/* Fondo unificado global */}
@@ -388,239 +415,218 @@ const Home = () => {
       {/* ===== CONTENEDOR ===== */}
       <div className="page-wrap">
 
-        {/* ===== HERO ===== */}
-        <motion.section
-          className="hero is-large is-neo"
-          initial={{ opacity: 0, y: prefersReduced ? 0 : 18 }}
+        {/* ===== HERO FULL-BLEED ===== */}
+<motion.section
+  id="hero"
+  className="hero-unified"
+  initial={{ opacity: 0, y: prefersReduced ? 0 : 20 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true, amount: 0.2 }}
+  transition={{ duration: d, ease }}
+  data-speed="-0.05"
+>
+  <div className="scanline" />
+  <div className="rain" />
+  <div className="rain2" />
+
+  <div className="hero-body has-text-centered">
+    {/* Bienvenido + caret */}
+    <motion.div
+      className="greet-wrap"
+      initial={{ opacity: 0, y: prefersReduced ? 0 : 10 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: d, ease, delay: 0.02 }}
+    >
+      <span
+        aria-hidden="true"
+        style={{
+          width: ".55rem",
+          height: ".55rem",
+          borderRadius: "45%",
+          background: "radial-gradient(circle at 30% 30%, #fff, var(--accent) 45%, transparent 70%)",
+          boxShadow: "0 0 16px var(--accent2)",
+          flex: "0 0 auto",
+        }}
+      />
+      <div style={{ display: "inline-flex", alignItems: "center", gap: ".18em", whiteSpace: "nowrap", maxWidth: "100%", overflow: "hidden" }}>
+        <motion.span ref={heroRef} className="hero-greet" style={{ ["--hn"]: 0 }}>
+          {heroTitle}
+        </motion.span>
+        {!prefersReduced && (
+          <motion.span
+            className="caret-hero"
+            aria-hidden="true"
+            animate={{ opacity: [1, 0, 1] }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          />
+        )}
+      </div>
+    </motion.div>
+
+    {/* Subtítulo principal */}
+    <motion.h1
+      className="title glitch mt-4"
+      data-text="Desarrollamos tus ideas y las hacemos tu web."
+      initial={{ opacity: 0, y: prefersReduced ? 0 : 14 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: d, ease, delay: 0.08 }}
+      style={{
+        fontSize: "clamp(1.6rem, 4.5vw, 3rem)",
+        fontWeight: 800,
+        lineHeight: 1.2,
+        background: "linear-gradient(90deg, var(--text), color-mix(in srgb,var(--accent) 16%, var(--text)) 40%, var(--text))",
+        WebkitBackgroundClip: "text",
+        color: "transparent",
+        textShadow: "0 6px 30px color-mix(in srgb, var(--accent) 26%, transparent)",
+      }}
+    >
+      Desarrollamos tus ideas y las hacemos tu web.
+    </motion.h1>
+
+    {/* Texto debajo */}
+    <motion.p
+      className="subtitle brand-sub mt-2"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: d, delay: 0.14 }}
+      style={{ fontSize: "clamp(1rem, 2.5vw, 1.25rem)" }}
+    >
+      En Danco Web, tu visión es nuestra misión. Performance real, código limpio y respeto por tu tema.
+    </motion.p>
+
+    {/* Botones */}
+    <motion.div
+      style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginTop: 18 }}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: d, delay: 0.22 }}
+    >
+      <motion.a
+        href="#servicios"
+        className="button is-rounded btn-accent"
+        whileHover={prefersReduced ? undefined : { y: -2, scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+      >
+        Ver servicios
+      </motion.a>
+      <motion.a
+        href="#contacto"
+        onClick={handleGoContact}
+        className="button is-rounded btn-ghost"
+        whileHover={prefersReduced ? undefined : { y: -2 }}
+        whileTap={{ scale: 0.98 }}
+      >
+        Contacto
+      </motion.a>
+    </motion.div>
+
+    {/* Chips */}
+    <motion.div
+      style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap", marginTop: 20 }}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: d, delay: 0.3 }}
+    >
+      {["Core Web Vitals", "SEO Técnico", "UI metalizada", "Accesibilidad"].map((t, i) => (
+        <motion.span
+          key={t}
+          className="chip"
+          initial={{ opacity: 0, y: prefersReduced ? 0 : 8 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: d, ease }}
+          viewport={{ once: true }}
+          transition={{ duration: d, delay: 0.32 + i * 0.06 }}
         >
-          <div className="scanline" />
-          <div className="rain" />
-          <div className="rain2" />
+          <i /> {t}
+        </motion.span>
+      ))}
+    </motion.div>
+  </div>
+</motion.section>
 
-          <div className="hero-body has-text-centered">
-            <motion.div
-              className="greet-wrap"
-              initial={{ opacity: 0, y: prefersReduced ? 0 : 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: d, ease, delay: 0.02 }}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",             // centrado vertical correcto
-                gap: ".55rem",
-                padding: "clamp(1rem, 5vw, 6rem) clamp(1.2rem, 7vw, 8rem)",
-                borderRadius: "999px",
-                background: "color-mix(in srgb, var(--accent) 10%, transparent)",
-                boxShadow: "0 12px 36px color-mix(in srgb, var(--accent) 32%, transparent)",
-                fontWeight: 800,
-                letterSpacing: ".06em",
-                textTransform: "uppercase",
-                color: "var(--text)",
-                justifyContent: "center",
-                width: "min(96vw, 1100px)",
-                maxWidth: "100%",
-                overflow: "hidden",
-              }}
-            >
-              <span
-                aria-hidden="true"
-                style={{
-                  width: ".55rem", height: ".55rem", borderRadius: "45%",
-                  background: "radial-gradient(circle at 30% 30%, #ffffffff, var(--accent) 45%, transparent 70%)",
-                  boxShadow: "0 0 16px var(--accent2)",
-                  flex: "0 0 auto",
-                }}
-              />
-              {/* === Texto con Typewriter (Motion) + caret === */}
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: ".18em",
-                  whiteSpace: "nowrap",
-                  maxWidth: "100%",
-                  overflow: "hidden",              // el caret tampoco sobrepasa
-                }}
-              >
-                <motion.span ref={heroRef} className="hero-greet" style={{ ["--hn"]: 0 }}>
-                  {heroTitle}
-                </motion.span>
-                {!prefersReduced && (
-                  <motion.span
-                    className="caret-hero"
-                    aria-hidden="true"
-                    animate={{ opacity: [1, 0, 1] }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  />
-                )}
-              </div>
-            </motion.div>
 
-            {/* ======= TÍTULO CAMBIADO (solo texto) ======= */}
-            <motion.h1
-              className="title is-2 mt-3 glitch"
-              data-text="Desarrollamos tus ideas y las hacemos tu web."
-              initial={{ opacity: 0, y: prefersReduced ? 0 : 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: d, ease, delay: 0.08 }}
-              style={{
-                background:
-                  "linear-gradient(90deg, var(--text), color-mix(in srgb, var(--accent) 16%, var(--text)) 40%, var(--text))",
-                WebkitBackgroundClip: "text",
-                backgroundClip: "text",
-                color: "transparent",
-                textShadow: "0 6px 30px color-mix(in srgb, var(--accent) 26%, transparent)",
-              }}
-            >
-              Desarrollamos tus ideas y las hacemos tu web.
-            </motion.h1>
+        {/* ===== SERVICIOS FULL-BLEED ===== */}
+<section id="servicios" className="services-unified">
+  <div className="scanline" />
+  <div className="rain" />
+  <div className="rain2" />
 
-            <motion.p
-              className="subtitle is-5 mt-2 brand-sub"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: d, delay: 0.14 }}
-            >
-              En Danco Web, tu visión es nuestra misión. Performance real, código limpio y respeto por tu tema.
-            </motion.p>
+  <header className="has-text-centered" style={{ marginBottom: "2rem" }}>
+    <motion.h2
+      className="title is-1 glitch"
+      data-text="Servicios de alto impacto"
+      initial={{ opacity: 0, y: prefersReduced ? 0 : 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: d, ease }}
+    >
+      Servicios de alto impacto
+    </motion.h2>
+    <p className="subtitle is-4" style={{ color: "var(--muted)" }}>
+      Diseño, desarrollo y growth — con estética metalizada y DX impecable.
+    </p>
+  </header>
 
-            <motion.div
-              style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginTop: 14 }}
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: d, delay: 0.22 }}
-            >
-              <motion.a
-                href="#servicios"
-                className="button is-rounded btn-accent"
-                whileHover={prefersReduced ? undefined : { y: -2, scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                Ver servicios
-              </motion.a>
-              <motion.a
-                href="#contacto"
-                onClick={handleGoContact}
-                className="button is-rounded btn-ghost"
-                whileHover={prefersReduced ? undefined : { y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                aria-label="Ir a contacto en el pie de página"
-              >
-                Contacto
-              </motion.a>
-            </motion.div>
-
-            <motion.div
-              style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap", marginTop: 18 }}
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: d, delay: 0.3 }}
-            >
-              {["Core Web Vitals", "SEO Técnico", "UI metalizada", "Accesibilidad"].map((t, i) => (
-                <motion.span
-                  key={t}
-                  className="chip"
-                  initial={{ opacity: 0, y: prefersReduced ? 0 : 8 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: d, delay: 0.32 + i * 0.06 }}
-                >
-                  <i /> {t}
-                </motion.span>
-              ))}
-            </motion.div>
+  <div className="columns is-variable is-6 is-multiline">
+    {[
+      {
+        t: "Diseño UX/UI",
+        d: "Sistemas de diseño, prototipos de alta fidelidad y contraste AA.",
+        b: ["Design System", "Prototipado", "Accesibilidad AA"],
+      },
+      {
+        t: "Desarrollo Full-Stack",
+        d: "Front veloz + APIs robustas. Seguridad, testing y CI/CD.",
+        b: ["SPA/SSR", "APIs REST/DB", "CI/CD + Observabilidad"],
+        hl: true,
+      },
+      {
+        t: "SEO & Growth",
+        d: "Arquitectura semántica, CWV y experimentación para crecer.",
+        b: ["Core Web Vitals", "GTM + Analytics", "Contenido técnico"],
+      },
+    ].map((card, idx) => (
+      <div key={card.t} className="column is-12-mobile is-6-tablet is-4-desktop">
+        <motion.article
+          className={`service-tilt card-weird p-5`}
+          initial={{ opacity: 0, y: prefersReduced ? 0 : 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: d, ease, delay: 0.05 + idx * 0.08 }}
+          style={{
+            boxShadow: card.hl
+              ? "0 24px 70px color-mix(in srgb, var(--accent) 35%, transparent)"
+              : "0 14px 40px var(--shadow)",
+          }}
+        >
+          <h3 className="title is-4">{card.t}</h3>
+          <p className="mb-3" style={{ color: "var(--muted)" }}>{card.d}</p>
+          <ul style={{ listStyle: "none", padding: 0, margin: "0 0 1rem 0", display: "grid", gap: ".45rem" }}>
+            {card.b.map((x) => (
+              <li key={x} style={{ display: "flex", gap: ".55rem", alignItems: "center", color: "var(--muted)" }}>
+                <span style={{
+                  width: ".5rem", height: ".5rem", borderRadius: "50%",
+                  background: "linear-gradient(135deg, var(--accent), var(--accent2))",
+                  boxShadow: "0 0 8px var(--accent)"
+                }} />
+                {x}
+              </li>
+            ))}
+          </ul>
+          <div style={{ display: "flex", gap: ".6rem" }}>
+            <a href="#contacto" onClick={handleGoContact} className="button is-rounded btn-accent is-small">Empezar</a>
+            <a href="#contacto" onClick={handleGoContact} className="button is-rounded btn-ghost is-small">Consultar</a>
           </div>
-        </motion.section>
+        </motion.article>
+      </div>
+    ))}
+  </div>
+</section>
 
-        {/* ===== SERVICIOS (tarjetas que “levitan y dan vuelta”) ===== */}
-        <section id="servicios" className="section-flow">
-          <header className="has-text-centered" style={{ marginBottom: "1.1rem" }}>
-            <motion.h2
-              className="title is-2"
-              initial={{ opacity: 0, y: prefersReduced ? 0 : 14 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: d, ease }}
-            >
-              Servicios de alto impacto
-            </motion.h2>
-            <p className="subtitle is-5" style={{ color: "var(--muted)" }}>
-              Diseño, desarrollo y growth — con estética metalizada y DX impecable.
-            </p>
-          </header>
-
-          <div className="scene-3d">
-            <div className="columns is-variable is-6 is-multiline">
-              {[
-                {
-                  t: "Diseño UX/UI",
-                  d: "Sistemas de diseño, prototipos de alta fidelidad y contraste AA.",
-                  b: ["Design System", "Prototipado", "Accesibilidad AA"],
-                },
-                {
-                  t: "Desarrollo Full-Stack",
-                  d: "Front veloz + APIs robustas. Seguridad, testing y CI/CD.",
-                  b: ["SPA/SSR", "APIs REST/DB", "CI/CD + Observabilidad"],
-                  hl: true,
-                },
-                {
-                  t: "SEO & Growth",
-                  d: "Arquitectura semántica, CWV y experimentación para crecer.",
-                  b: ["Core Web Vitals", "GTM + Analytics", "Contenido técnico"],
-                },
-              ].map((card, idx) => (
-                <div key={card.t} className="column is-12-mobile is-6-tablet is-4-desktop">
-                  <motion.article
-                    className="card-weird p-5"
-                    initial={{ opacity: 0, y: prefersReduced ? 0 : 28, rotateY: prefersReduced ? 0 : -18 }}
-                    whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
-                    viewport={{ once: true, amount: 0.35 }}
-                    transition={{ duration: d, ease, delay: 0.05 + idx * 0.06 }}
-                    whileHover={
-                      prefersReduced
-                        ? undefined
-                        : { y: -12, rotateX: -6, rotateY: 6, scale: 1.015, transition: { type: "spring", stiffness: 120, damping: 14 } }
-                    }
-                    onViewportEnter={(entry) => {
-                      if (prefersReduced) return;
-                      animate(entry.target, { rotateY: [0, 360, 0] }, { duration: 1.25, easing: "cubic-bezier(.22,1,.36,1)" });
-                    }}
-                    style={{
-                      outline: card.hl ? "1px solid color-mix(in srgb, var(--accent2) 35%, transparent)" : undefined,
-                      boxShadow: card.hl ? "0 24px 70px color-mix(in srgb, var(--accent) 30%, transparent)" : undefined,
-                    }}
-                  >
-                    <h3 className="title is-4" style={{ marginBottom: ".35rem" }}>{card.t}</h3>
-                    <p className="mb-3" style={{ color: "var(--muted)" }}>{card.d}</p>
-                    <ul style={{ listStyle: "none", padding: 0, margin: "0 0 1rem 0", display: "grid", gap: ".45rem" }}>
-                      {card.b.map((x) => (
-                        <li key={x} style={{ display: "flex", gap: ".55rem", alignItems: "center", color: "var(--muted)" }}>
-                          <span style={{
-                            width: ".5rem", height: ".5rem", borderRadius: "50%",
-                            background: "linear-gradient(135deg, var(--accent), var(--accent2))",
-                            boxShadow: "0 0 10px color-mix(in srgb, var(--accent) 40%, transparent)"
-                          }} />
-                          {x}
-                        </li>
-                      ))}
-                    </ul>
-                    <div style={{ display: "flex", gap: ".6rem" }}>
-                      <a href="#contacto" onClick={handleGoContact} className="button is-rounded btn-accent is-small">Empezar</a>
-                      <a href="#contacto" onClick={handleGoContact} className="button is-rounded btn-ghost is-small">Consultar</a>
-                    </div>
-                  </motion.article>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
 
         {/* ===== TERMINAL DEMO ===== */}
         <section className="section-flow" style={{ background: "linear-gradient(180deg, color-mix(in srgb, var(--panel-glass) 70%, transparent), transparent 60%)" }}>
@@ -769,4 +775,4 @@ const Home = () => {
   );
 };
 
-export { Home };
+export { Home }; 
