@@ -24,6 +24,9 @@ const Layout = (props) => {
   const burgerRef = useRef(null);
   const menuRef = useRef(null);
   const overlayRef = useRef(null);
+  const line1Ref = useRef(null);
+  const line2Ref = useRef(null);
+  const line3Ref = useRef(null);
 
   const prefersReduced = useMemo(
     () => window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches,
@@ -62,11 +65,12 @@ const Layout = (props) => {
     return () => mq.removeEventListener?.("change", handler);
   }, []);
 
-  // Animaciones al abrir/cerrar (mobile)
+  // Animaciones al abrir/cerrar (mobile) con motion
   useEffect(() => {
     const isMobile = window.matchMedia("(max-width: 1023px)").matches;
-    if (!isMobile) return;
-    const dur = prefersReduced ? 0 : 0.42;
+    if (!isMobile || prefersReduced) return;
+    const dur = 0.42;
+    const ease = [0.22, 1, 0.36, 1];
 
     if (menuRef.current) {
       animate(
@@ -74,14 +78,41 @@ const Layout = (props) => {
         open
           ? { opacity: [0, 1], transform: ["translateY(-8px)", "translateY(0)"] }
           : { opacity: [1, 0], transform: ["translateY(0)", "translateY(-8px)"] },
-        { duration: dur, easing: "cubic-bezier(.22,.61,.36,1)" }
+        { duration: dur, easing: ease }
       );
     }
     if (overlayRef.current) {
       animate(
         overlayRef.current,
-        { opacity: open ? 1 : 0 },
-        { duration: dur, easing: "cubic-bezier(.22,.61,.36,1)" }
+        { opacity: open ? [0, 1] : [1, 0] },
+        { duration: dur, easing: ease }
+      );
+    }
+
+    // Animación de líneas de hamburguesa con motion para morph a X
+    if (line1Ref.current && line2Ref.current && line3Ref.current) {
+      const lineDur = 0.28;
+      const lineEase = [0.2, 0.6, 0.2, 1];
+      animate(
+        line1Ref.current,
+        open
+          ? { top: "50%", transform: "translateY(-50%) rotate(45deg)" }
+          : { top: "33%", transform: "translateY(-50%) rotate(0deg)" },
+        { duration: lineDur, easing: lineEase }
+      );
+      animate(
+        line2Ref.current,
+        open
+          ? { opacity: 0, transform: "scaleX(0.4)" }
+          : { opacity: 1, transform: "scaleX(1)" },
+        { duration: lineDur, easing: lineEase }
+      );
+      animate(
+        line3Ref.current,
+        open
+          ? { top: "50%", transform: "translateY(-50%) rotate(-45deg)" }
+          : { top: "67%", transform: "translateY(-50%) rotate(0deg)" },
+        { duration: lineDur, easing: lineEase }
       );
     }
   }, [open, prefersReduced]);
@@ -95,7 +126,7 @@ const Layout = (props) => {
 
   return (
     <>
-      {/* Temas + ajustes para navbar fija */}
+      {/* Temas + ajustes para navbar fija y main full-screen */}
       <style>{`
         :root{
           /* DARK */
@@ -173,9 +204,12 @@ const Layout = (props) => {
           background: linear-gradient(90deg,var(--accent),var(--accent2));
         }
 
-        /* Ajuste de espacio del contenido para no quedar debajo de la navbar fija */
+        /* Ajuste de espacio del contenido para no quedar debajo de la navbar fija, y full-width */
         .app-main{
           padding-top: var(--nav-offset);
+          width: 100vw;
+          margin-left: calc(50% - 50vw);
+          overflow-x: hidden; /* Evita scroll horizontal si hay overflow */
         }
 
         .panel {
@@ -220,8 +254,8 @@ const Layout = (props) => {
           transition: transform .15s ease, filter .25s ease;
         }
         .navbar .navbar-item.brand-logo:hover img{
-          transform: translateY(-1px);
-          filter: drop-shadow(0 4px 10px rgba(0,0,0,.28));
+          transform: translateY(-1px) scale(1.02);
+          filter: drop-shadow(0 4px 10px rgba(0,0,0,.28)) brightness(1.05);
         }
 
         @media (max-width: 1023px){
@@ -244,7 +278,7 @@ const Layout = (props) => {
           .nav-overlay{ display:none !important; }
         }
 
-        /* ===== Estilos de hamburguesa (con morph a X) ===== */
+        /* ===== Estilos de hamburguesa (con morph a X, mejorado con motion) ===== */
         .navbar-burger{
           position: relative;
           width: 48px; height: 48px;
@@ -266,22 +300,14 @@ const Layout = (props) => {
           transition: transform .28s cubic-bezier(.2,.6,.2,1), opacity .2s ease, width .2s ease, top .28s ease;
           transform-origin:center;
         }
-        .navbar-burger span:nth-child(1){ top:16px; }
-        .navbar-burger span:nth-child(2){ top:23px; }
-        .navbar-burger span:nth-child(3){ top:30px; }
 
-        /* Brillo sutil en hover de las líneas */
+        /* Brillo sutil en hover de las líneas con animación motion-like */
         .navbar-burger:hover span{
           background: linear-gradient(90deg, color-mix(in srgb, var(--nav-text) 85%, transparent), var(--accent));
           background-size:200% 100%;
           animation: lineShine .6s ease both;
         }
         @keyframes lineShine{ 0%{background-position:0% 0;} 100%{background-position:100% 0;} }
-
-        /* Activo -> X centrada */
-        .navbar-burger.is-active span:nth-child(1){ top:23px; transform: rotate(45deg); }
-        .navbar-burger.is-active span:nth-child(2){ opacity:0; transform: scaleX(.4); }
-        .navbar-burger.is-active span:nth-child(3){ top:23px; transform: rotate(-45deg); }
 
         /* ===== Overlay con blur (animado vía Motion) ===== */
         .nav-overlay{
@@ -307,6 +333,65 @@ const Layout = (props) => {
         .to-top.is-visible{ transform: translateY(0) scale(1); opacity:1; }
         .to-top:hover{ filter:saturate(1.05) brightness(1.02); transform: translateY(-2px) scale(1.02); }
         .to-top:focus-visible{ outline:2px solid var(--ring-hover); outline-offset:3px; }
+
+        /* Estilo del footer con soporte claro/oscuro */
+          .footer{
+            background: transparent;
+            border-top: 1px solid var(--footer-stroke);
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+          }
+          .ft-title{ color: var(--text); font-weight: 800; font-size: 1.25rem; }
+          .ft-text{ color: var(--muted); }
+          .ft-link{ color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--panel-stroke); }
+          .ft-link:hover{ color: var(--accent); border-color: var(--accent); }
+
+          /* Caja del formulario */
+          .ft-form.box{
+            background: var(--panel-glass);
+            border: 1px solid var(--panel-stroke);
+            box-shadow: 0 18px 50px var(--shadow);
+            border-radius: 16px;
+          }
+
+          /* Inputs Bulma con variables del tema */
+          .ft-form .input,
+          .ft-form .textarea{
+            background: color-mix(in srgb, var(--bg) 78%, var(--text) 22%);
+            border: 1px solid var(--panel-stroke);
+            color: var(--text);
+          }
+          .ft-form .input::placeholder,
+          .ft-form .textarea::placeholder{ color: var(--muted); }
+          .ft-form .label{ color: var(--text); font-weight: 700; }
+
+          /* Botón primario con tu acento */
+          .ft-submit{
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: var(--bg);
+            border: none;
+            font-weight: 800;
+            transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+            box-shadow: 0 14px 32px color-mix(in srgb, var(--accent) 35%, transparent);
+          }
+          .ft-submit:hover{ transform: translateY(-2px); filter: saturate(1.05); }
+
+          /* Redes */
+          .ft-social{ display:flex; gap:.75rem; margin-top:.75rem; }
+          .ft-social a{
+            display:grid; place-items:center; width:38px; height:38px; border-radius:10px;
+            background: var(--panel-glass);
+            border:1px solid var(--panel-stroke);
+            color: var(--text);
+            transition: transform .15s ease, border-color .15s ease, color .15s ease;
+          }
+          .ft-social a:hover{
+            transform: translateY(-2px);
+            border-color: var(--accent);
+            color: var(--accent);
+          }
+
+          .ft-bottom{ border-top:1px solid var(--footer-stroke); margin-top:2rem; padding-top:1.25rem; color: var(--muted); }
       `}</style>
 
       {/* Overlay con blur (cierra al click) */}
@@ -334,9 +419,9 @@ const Layout = (props) => {
               onClick={onBurgerClick}
               title={open ? "Cerrar" : "Menú"}
             >
-              <span aria-hidden="true"></span>
-              <span aria-hidden="true"></span>
-              <span aria-hidden="true"></span>
+              <span ref={line1Ref} aria-hidden="true"></span>
+              <span ref={line2Ref} aria-hidden="true"></span>
+              <span ref={line3Ref} aria-hidden="true"></span>
             </a>
           </div>
 
@@ -400,74 +485,13 @@ const Layout = (props) => {
         </nav>
       </header>
 
-      {/* MAIN (con offset para navbar fija) */}
-      <main className="section app-main">
+      {/* MAIN (con offset para navbar fija y full-width) */}
+      <main className="app-main">
         {children}
       </main>
 
       {/* FOOTER */}
       <footer className="footer">
-        <style>{`
-          /* Estilo del footer con soporte claro/oscuro */
-          .footer{
-            background: transparent;
-            border-top: 1px solid var(--footer-stroke);
-            padding-top: 3rem;
-            padding-bottom: 3rem;
-          }
-          .ft-title{ color: var(--text); font-weight: 800; font-size: 1.25rem; }
-          .ft-text{ color: var(--muted); }
-          .ft-link{ color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--panel-stroke); }
-          .ft-link:hover{ color: var(--accent); border-color: var(--accent); }
-
-          /* Caja del formulario */
-          .ft-form.box{
-            background: var(--panel-glass);
-            border: 1px solid var(--panel-stroke);
-            box-shadow: 0 18px 50px var(--shadow);
-            border-radius: 16px;
-          }
-
-          /* Inputs Bulma con variables del tema */
-          .ft-form .input,
-          .ft-form .textarea{
-            background: color-mix(in srgb, var(--bg) 78%, var(--text) 22%);
-            border: 1px solid var(--panel-stroke);
-            color: var(--text);
-          }
-          .ft-form .input::placeholder,
-          .ft-form .textarea::placeholder{ color: var(--muted); }
-          .ft-form .label{ color: var(--text); font-weight: 700; }
-
-          /* Botón primario con tu acento */
-          .ft-submit{
-            background: linear-gradient(135deg, var(--accent), var(--accent2));
-            color: var(--bg);
-            border: none;
-            font-weight: 800;
-            transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
-            box-shadow: 0 14px 32px color-mix(in srgb, var(--accent) 35%, transparent);
-          }
-          .ft-submit:hover{ transform: translateY(-2px); filter: saturate(1.05); }
-
-          /* Redes */
-          .ft-social{ display:flex; gap:.75rem; margin-top:.75rem; }
-          .ft-social a{
-            display:grid; place-items:center; width:38px; height:38px; border-radius:10px;
-            background: var(--panel-glass);
-            border:1px solid var(--panel-stroke);
-            color: var(--text);
-            transition: transform .15s ease, border-color .15s ease, color .15s ease;
-          }
-          .ft-social a:hover{
-            transform: translateY(-2px);
-            border-color: var(--accent);
-            color: var(--accent);
-          }
-
-          .ft-bottom{ border-top:1px solid var(--footer-stroke); margin-top:2rem; padding-top:1.25rem; color: var(--muted); }
-        `}</style>
-
         <div className="container">
           <div className="columns is-variable is-7">
             {/* Columna: Marca / Contacto / Redes */}
