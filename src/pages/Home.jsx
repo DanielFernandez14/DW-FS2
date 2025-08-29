@@ -36,102 +36,103 @@ const HomeBase = () => {
   // }, []);
 
   const texts = useMemo(
-    () => ({
-      es: {
-        welcome: "¡Bienvenido!",
-        heroTitle: "Desarrollamos tus ideas y las hacemos tu web.",
-        heroSub:
-          "En Danco Web, tu visión es nuestra misión. Performance real, código limpio y respeto por tu tema.",
-        servicesTitle: "Desarrollo de sitios web a medida",
-        servicesSub:
-          "Como desarrollador web Full Stack ofrezco los siguientes servicios web.",
-        package1Title: "Paquete Básico UX/UI",
-        package1Desc:
-          "Plantilla base con diseño responsive, prototipos y accesibilidad AA.",
-        package1Bullets: ["Design System Básico", "Prototipado Rápido", "Accesibilidad AA"],
-        package2Title: "Paquete Premium Full-Stack",
-        package2Desc:
-          "Plantilla avanzada + APIs integradas. Seguridad, testing y deployment.",
-        package2Bullets: ["SPA/SSR Premium", "APIs REST/DB", "CI/CD + Observabilidad"],
-        package3Title: "Paquete E-commerce & Growth",
-        package3Desc:
-          "Plantilla para tiendas con SEO, CWV y herramientas de growth.",
-        package3Bullets: ["Core Web Vitals", "GTM + Analytics", "Contenido Optimizado"],
-        pipelineTitle: "Pipeline de compra claro",
-        pipelineSub:
-          "De la selección a la entrega con customización, métricas y accesibilidad incluida.",
-        pipelineChips: ["Lighthouse 95+", "A11y AA", "Latency Baja", "SEO Técnico"],
-        pipelineButton: "Hablemos",
-        terminalCode:
-          "$ npx buy-dancoweb-template\n✔ Generando stack (Bulma + Motion + A11y)...\n✔ Configurando personalización y CWV...\n✔ Desplegando tu sitio...",
-        terminalTyper: "ready: tienda optimizada y metalizada ⚡",
-        projectsTitle: "Plantillas recientes",
-        projectDesc: "Plantilla {i} + customización. CWV alto y SEO técnico.",
-        ctaTitle: "¿Listo para comprar tu sitio?",
-        ctaSub: "Elegí la web que necesitas para vos o tu empresa",
-        ctaButton1: "Consultar ahora",
-        ctaButton2: "Charlar 15'",
-        contact: "Contacto",
-        services: "Productos",
-        start: "Empezar",
-        consult: "Consultar",
-        view: "Ver demo",
-        fetchedServicesTitle: "Servicios cargados (desde la base de datos)",
-        noServices: "No hay servicios cargados aún.",
-        loadingServices: "Cargando servicios…",
-        price: "Precio",
-        inactive: "Inactivo",
-      },
-      en: {
-        welcome: "Welcome!",
-        heroTitle: "Buy your ready and customized website.",
-        heroSub:
-          "At DancoWeb Store, choose premium templates, customize them and go online with optimal performance and metallic design.",
-        servicesTitle: "High-impact Packages",
-        servicesSub:
-          "Ready templates, full-stack customization and growth optimization — with metallic aesthetics and impeccable DX.",
-        package1Title: "Basic UX/UI Package",
-        package1Desc:
-          "Base template with responsive design, prototypes and AA accessibility.",
-        package1Bullets: ["Basic Design System", "Rapid Prototyping", "AA Accessibility"],
-        package2Title: "Premium Full-Stack Package",
-        package2Desc:
-          "Advanced template + integrated APIs. Security, testing and deployment.",
-        package2Bullets: ["Premium SPA/SSR", "REST/DB APIs", "CI/CD + Observability"],
-        package3Title: "E-commerce & Growth Package",
-        package3Desc: "Store template with SEO, CWV and growth tools.",
-        package3Bullets: ["Core Web Vitals", "GTM + Analytics", "Optimized Content"],
-        pipelineTitle: "Clear Purchase Pipeline",
-        pipelineSub:
-          "From selection to delivery with customization, metrics and included accessibility.",
-        pipelineChips: ["Lighthouse 95+", "A11y AA", "Low Latency", "Technical SEO"],
-        pipelineButton: "Let's Talk",
-        terminalCode:
-          "$ npx buy-dancoweb-template\n✔ Generating stack (Bulma + Motion + A11y)...\n✔ Setting up customization and CWV...\n✔ Deploying your site...",
-        terminalTyper: "ready: optimized and metallized store ⚡",
-        projectsTitle: "Recent Templates",
-        projectDesc: "Template {i} + customization. High CWV and technical SEO.",
-        ctaTitle: "Ready to buy your site?",
-        ctaSub:
-          "Choose a package and customize it. Clear, scalable solutions with metallic look.",
-        ctaButton1: "Buy Now",
-        ctaButton2: "Chat 15'",
-        contact: "Contact",
-        services: "View Packages",
-        start: "Start",
-        consult: "Consult",
-        view: "View demo",
-        fetchedServicesTitle: "Loaded services (from database)",
-        noServices: "There are no services yet.",
-        loadingServices: "Loading services…",
-        price: "Price",
-        inactive: "Inactive",
-      },
-    }),
-    []
-  );
+  () => ({
+    es: {
+      welcome: "¡Bienvenido!",
+      heroTitle: "Desarrollamos tus ideas y las hacemos tu web.",
+      heroSub:
+        "En Danco Web, tu visión es nuestra misión. Performance real, código limpio y respeto por tu tema.",
+      servicesTitle: "Desarrollo de sitios web a medida",
+      servicesSub:
+        "Como desarrollador web Full Stack ofrezco los siguientes servicios web.",
+      package1Title: "Paquete Básico UX/UI",
+      package1Desc:
+        "Plantilla base con diseño responsive, prototipos y accesibilidad AA.",
+      package1Bullets: ["Design System Básico", "Prototipado Rápido", "Accesibilidad AA"],
+      package2Title: "Paquete Premium Full-Stack",
+      package2Desc:
+        "Plantilla avanzada + APIs integradas. Seguridad, testing y deployment.",
+      package2Bullets: ["SPA/SSR Premium", "APIs REST/DB", "CI/CD + Observabilidad"],
+      package3Title: "Paquete E-commerce & Growth",
+      package3Desc:
+        "Plantilla para tiendas con SEO, CWV y herramientas de growth.",
+      package3Bullets: ["Core Web Vitals", "GTM + Analytics", "Contenido Optimizado"],
+      pipelineTitle: "Pipeline de compra claro",
+      pipelineSub:
+        "De la selección a la entrega con customización, métricas y accesibilidad incluida.",
+      pipelineChips: ["Lighthouse 95+", "A11y AA", "Latency Baja", "SEO Técnico"],
+      pipelineButton: "Hablemos",
+      terminalCode:
+        "$ npx buy-dancoweb-template\n✔ Generando stack (Bulma + Motion + A11y)...\n✔ Configurando personalización y CWV...\n✔ Desplegando tu sitio...",
+      terminalTyper: "ready: deploy listo, tienda optimizada ⚡",
+      projectsTitle: "Plantillas recientes",
+      projectDesc: "Plantilla {i} + customización. CWV alto y SEO técnico.",
+      ctaTitle: "¿Listo para comprar tu sitio?",
+      ctaSub: "Elegí la web que necesitas para vos o tu empresa",
+      ctaButton1: "Consultar ahora",
+      ctaButton2: "Charlar 15'",
+      contact: "Contacto",
+      services: "Productos",
+      start: "Empezar",
+      consult: "Consultar",
+      view: "Ver demo",
+      fetchedServicesTitle: "Servicios cargados (desde la base de datos)",
+      noServices: "No hay servicios cargados aún.",
+      loadingServices: "Cargando servicios…",
+      price: "Precio",
+      inactive: "Inactivo",
+    },
+    en: {
+      welcome: "Welcome!",
+      heroTitle: "We develop your ideas and turn them into your website.",
+      heroSub:
+        "At Danco Web, your vision is our mission. Real performance, clean code, and respect for your brand.",
+      servicesTitle: "Custom Website Development",
+      servicesSub:
+        "As a Full Stack Web Developer, I offer the following tailored web services.",
+      package1Title: "Basic UX/UI Package",
+      package1Desc:
+        "Base template with responsive design, prototypes, and AA accessibility.",
+      package1Bullets: ["Basic Design System", "Rapid Prototyping", "AA Accessibility"],
+      package2Title: "Premium Full-Stack Package",
+      package2Desc:
+        "Advanced template + integrated APIs. Security, testing, and deployment included.",
+      package2Bullets: ["Premium SPA/SSR", "REST/DB APIs", "CI/CD + Observability"],
+      package3Title: "E-commerce & Growth Package",
+      package3Desc:
+        "Store template with SEO, Core Web Vitals optimization, and growth tools.",
+      package3Bullets: ["Core Web Vitals", "GTM + Analytics", "Optimized Content"],
+      pipelineTitle: "Clear Purchase Pipeline",
+      pipelineSub:
+        "From selection to delivery with customization, metrics, and built-in accessibility.",
+      pipelineChips: ["Lighthouse 95+", "A11y AA", "Low Latency", "Technical SEO"],
+      pipelineButton: "Let’s Talk",
+      terminalCode:
+        "$ npx buy-dancoweb-template\n✔ Generating stack (Bulma + Motion + A11y)...\n✔ Setting up customization and CWV...\n✔ Deploying your site...",
+      terminalTyper: "ready: deploy completed, optimized store ⚡",
+      projectsTitle: "Recent Templates",
+      projectDesc: "Template {i} + customization. High CWV and technical SEO.",
+      ctaTitle: "Ready to get your website?",
+      ctaSub: "Choose the site you need for yourself or your business.",
+      ctaButton1: "Request Now",
+      ctaButton2: "Schedule a 15’ Chat",
+      contact: "Contact",
+      services: "Products",
+      start: "Start",
+      consult: "Consult",
+      view: "View demo",
+      fetchedServicesTitle: "Services loaded (from database)",
+      noServices: "No services available yet.",
+      loadingServices: "Loading services…",
+      price: "Price",
+      inactive: "Inactive",
+    },
+  }),
+  []
+);
 
-  const t = texts[lang];
+const t = texts[lang];
+
 
   /* ========= Parallax súper fluido (rAF + lerp) — on-demand ========= */
   useEffect(() => {
