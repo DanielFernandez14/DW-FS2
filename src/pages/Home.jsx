@@ -552,23 +552,38 @@ const Home = () => {
           .subtitle.is-5{ font-size: clamp(1rem, 4vw, 1.1rem); }
         }
 
-        /* ====== SOLO CAMBIO SOLICITADO: título + logo a la derecha ====== */
+        /* ====== FILA IMG + BIENVENIDO ====== */
+        .hero-media-row{
+          display:flex;
+          flex-direction: column;   /* mobile: imagen arriba, saludo debajo */
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+        }
+        @media (min-width: 768px){
+          .hero-media-row{
+            flex-direction: row;    /* desktop: imagen izquierda, saludo derecha */
+            gap: clamp(12px, 3vw, 28px);
+          }
+        }
+
+        /* Título (debajo) */
         .hero-title-row{
           display:flex;
-          flex-direction: column;         /* mobile first: stack */
+          flex-direction: column;
           align-items: center;
           gap: 12px;
         }
         @media (min-width: 768px){
           .hero-title-row{
-            flex-direction: row;          /* desktop: lado a lado */
+            flex-direction: row;
             justify-content: center;
             gap: clamp(12px, 3vw, 28px);
           }
-          .hero-title-row .title{ margin: 0; } /* sin saltos extra */
+          .hero-title-row .title{ margin: 0; }
         }
 
-        /* Tamaño del logo: el mismo que definimos antes */
+        /* Tamaño del logo */
         .hero-logo{
           display:block;
           width: clamp(140px, 26vw, 320px);
@@ -578,7 +593,7 @@ const Home = () => {
           filter: drop-shadow(0 6px 24px color-mix(in srgb, var(--accent) 20%, transparent));
         }
         @media (max-width: 480px){
-          .hero-logo{ width: clamp(120px, 45vw, 220px); }
+          .hero-logo{ width: clamp(180px, 55vw, 220px); }
         }
         @media (min-width: 1400px){
           .hero-logo{ width: 360px; }
@@ -635,57 +650,59 @@ const Home = () => {
           <div className="rain2" />
 
           <div className="hero-body has-text-centered">
-            {/* ¡Bienvenido! (sin tocar) */}
-            <motion.div
-              className="greet-wrap"
-              initial={{ opacity: 0, y: prefersReduced ? 0 : 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: d, ease, delay: 0.02 }}
-            >
-              <span
-                aria-hidden="true"
-                style={{
-                  width: ".55rem",
-                  height: ".55rem",
-                  borderRadius: "45%",
-                  background:
-                    "radial-gradient(circle at 30% 30%, #fff, var(--accent) 45%, transparent 70%)",
-                  boxShadow: "0 0 16px var(--accent2)",
-                  flex: "0 0 auto",
-                }}
-              />
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: ".18em",
-                  whiteSpace: "nowrap",
-                  maxWidth: "100%",
-                  overflow: "hidden",
-                }}
-              >
-                <motion.span
-                  ref={heroRef}
-                  className="hero-greet"
-                  style={{ ["--hn"]: 0 }}
-                >
-                  {t.welcome}
-                </motion.span>
-                {!prefersReduced && (
-                  <motion.span
-                    className="caret-hero"
-                    aria-hidden="true"
-                    animate={{ opacity: [1, 0, 1] }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  />
-                )}
-              </div>
-            </motion.div>
-
-            {/* === Título + Logo a la derecha (único cambio) === */}
-            <div className="hero-title-row">
+            {/* === FILA: IMG (izq desk / arriba mobile) + BIENVENIDO (der desk / abajo mobile) === */}
+            <div className="hero-media-row">
               <img src="/Danco/danco.png" alt="danco" className="hero-logo" />
+              <motion.div
+                className="greet-wrap"
+                initial={{ opacity: 0, y: prefersReduced ? 0 : 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: d, ease, delay: 0.02 }}
+              >
+                <span
+                  aria-hidden="true"
+                  style={{
+                    width: ".55rem",
+                    height: ".55rem",
+                    borderRadius: "45%",
+                    background:
+                      "radial-gradient(circle at 30% 30%, #fff, var(--accent) 45%, transparent 70%)",
+                    boxShadow: "0 0 16px var(--accent2)",
+                    flex: "0 0 auto",
+                  }}
+                />
+                <div
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: ".18em",
+                    whiteSpace: "nowrap",
+                    maxWidth: "100%",
+                    overflow: "hidden",
+                  }}
+                >
+                  <motion.span
+                    ref={heroRef}
+                    className="hero-greet"
+                    style={{ ["--hn"]: 0 }}
+                  >
+                    {t.welcome}
+                  </motion.span>
+                  {!prefersReduced && (
+                    <motion.span
+                      className="caret-hero"
+                      aria-hidden="true"
+                      animate={{ opacity: [1, 0, 1] }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    />
+                  )}
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Título (debajo) */}
+            <div className="hero-title-row">
               <motion.h1
                 className="title glitch mt-4"
                 data-text={t.heroTitle}
@@ -707,8 +724,6 @@ const Home = () => {
               >
                 {t.heroTitle}
               </motion.h1>
-
-              
             </div>
 
             {/* Texto debajo */}
