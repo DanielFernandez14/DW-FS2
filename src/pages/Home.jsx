@@ -3,10 +3,36 @@ import { useEffect, useRef, useState } from "react";
 import { Layout } from "../components/Layout";
 import { motion, useReducedMotion } from "motion/react";
 import { animate } from "motion";
+import { getAllServices /*, subscribeServices*/ } from "../services/service";
 
 const Home = () => {
   const prefersReduced = useReducedMotion();
   const [lang, setLang] = useState("es"); // 'es' por defecto
+
+  // === NUEVO: estado para CRUD Firestore (no modifica nada más) ===
+  const [services, setServices] = useState([]);
+  const [loadingServices, setLoadingServices] = useState(true);
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const items = await getAllServices();
+        if (mounted) setServices(items);
+      } catch (e) {
+        console.error("Error al cargar servicios:", e);
+      } finally {
+        if (mounted) setLoadingServices(false);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+  // Opción en tiempo real (dejada comentada a pedido)
+  // useEffect(() => {
+  //   const unsub = subscribeServices((items) => setServices(items));
+  //   return () => unsub();
+  // }, []);
 
   const texts = {
     es: {
@@ -20,11 +46,7 @@ const Home = () => {
       package1Title: "Paquete Básico UX/UI",
       package1Desc:
         "Plantilla base con diseño responsive, prototipos y accesibilidad AA.",
-      package1Bullets: [
-        "Design System Básico",
-        "Prototipado Rápido",
-        "Accesibilidad AA",
-      ],
+      package1Bullets: ["Design System Básico", "Prototipado Rápido", "Accesibilidad AA"],
       package2Title: "Paquete Premium Full-Stack",
       package2Desc:
         "Plantilla avanzada + APIs integradas. Seguridad, testing y deployment.",
@@ -44,8 +66,7 @@ const Home = () => {
       projectsTitle: "Plantillas recientes",
       projectDesc: "Plantilla {i} + customización. CWV alto y SEO técnico.",
       ctaTitle: "¿Listo para comprar tu sitio?",
-      ctaSub:
-        "Elegí la web que necesitas para vos o tu empresa",
+      ctaSub: "Elegí la web que necesitas para vos o tu empresa",
       ctaButton1: "Consultar ahora",
       ctaButton2: "Charlar 15'",
       contact: "Contacto",
@@ -53,6 +74,11 @@ const Home = () => {
       start: "Empezar",
       consult: "Consultar",
       view: "Ver demo",
+      fetchedServicesTitle: "Servicios cargados (desde la base de datos)",
+      noServices: "No hay servicios cargados aún.",
+      loadingServices: "Cargando servicios…",
+      price: "Precio",
+      inactive: "Inactivo",
     },
     en: {
       welcome: "Welcome!",
@@ -93,6 +119,11 @@ const Home = () => {
       start: "Start",
       consult: "Consult",
       view: "View demo",
+      fetchedServicesTitle: "Loaded services (from database)",
+      noServices: "There are no services yet.",
+      loadingServices: "Loading services…",
+      price: "Price",
+      inactive: "Inactive",
     },
   };
 
@@ -127,8 +158,7 @@ const Home = () => {
   /* ========= Scroll al footer de contacto + highlight ========= */
   const handleGoContact = (e) => {
     if (e) e.preventDefault();
-    const target =
-      document.querySelector("#contacto") || document.querySelector("footer");
+    const target = document.querySelector("#contacto") || document.querySelector("footer");
     if (!target) return;
 
     if (prefersReduced) {
@@ -555,10 +585,9 @@ const Home = () => {
         /* ====== FILA IMG + BIENVENIDO ====== */
         .hero-media-row{
           display:flex;
-          flex-direction: column;   /* mobile: imagen arriba, saludo debajo */
+          flex-direction: column;   /* mobile: imagen arriba, saludo abajo */
           align-items: center;
           justify-content: center;
-          gap: 12px;
         }
         @media (min-width: 768px){
           .hero-media-row{
@@ -572,7 +601,10 @@ const Home = () => {
           display:flex;
           flex-direction: column;
           align-items: center;
-          gap: 12px;
+          gap: clamp(8px, 4vw, 24px);
+          margin-top: clamp(1.5rem, 4vh, 3rem);
+          padding: 0 clamp(1rem, 5vw, 3rem);
+          text-align: center;
         }
         @media (min-width: 768px){
           .hero-title-row{
@@ -598,19 +630,18 @@ const Home = () => {
         @media (min-width: 1400px){
           .hero-logo{ width: 360px; }
         }
-          @media (max-width: 768px) {
-  .page-wrap {
-    max-width: 100% !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-  }
-}
-#servicios {
-  scroll-margin-top: 80px; /* Ajustá este valor a la altura de tu header/navbar */
-}
-
+        @media (max-width: 768px) {
+          .page-wrap {
+            max-width: 100% !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+          }
+        }
+        #servicios {
+          scroll-margin-top: 80px; /* Ajustá este valor a la altura de tu header/navbar */
+        }
       `}</style>
 
       {/* Fondo unificado global */}
@@ -652,7 +683,7 @@ const Home = () => {
           <div className="hero-body has-text-centered">
             {/* === FILA: IMG (izq desk / arriba mobile) + BIENVENIDO (der desk / abajo mobile) === */}
             <div className="hero-media-row">
-              <img src="/Danco/danco.png" alt="danco" className="hero-logo" />
+              <img src="/SVG/danco-embedded.svg" alt="danco" className="hero-logo" />
               <motion.div
                 className="greet-wrap"
                 initial={{ opacity: 0, y: prefersReduced ? 0 : 10 }}
@@ -682,11 +713,7 @@ const Home = () => {
                     overflow: "hidden",
                   }}
                 >
-                  <motion.span
-                    ref={heroRef}
-                    className="hero-greet"
-                    style={{ ["--hn"]: 0 }}
-                  >
+                  <motion.span ref={heroRef} className="hero-greet" style={{ ["--hn"]: 0 }}>
                     {t.welcome}
                   </motion.span>
                   {!prefersReduced && (
@@ -785,23 +812,20 @@ const Home = () => {
               viewport={{ once: true }}
               transition={{ duration: d, delay: 0.3 }}
             >
-              {[
-                "Seguridad",
-                "Confianza",
-                "Personalización",
-                "Garantía",
-              ].map((chipText, i) => (
-                <motion.span
-                  key={chipText}
-                  className="chip"
-                  initial={{ opacity: 0, y: prefersReduced ? 0 : 8 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: d, delay: 0.32 + i * 0.06 }}
-                >
-                  <i /> {chipText}
-                </motion.span>
-              ))}
+              {["Seguridad", "Confianza", "Personalización", "Garantía"].map(
+                (chipText, i) => (
+                  <motion.span
+                    key={chipText}
+                    className="chip"
+                    initial={{ opacity: 0, y: prefersReduced ? 0 : 8 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: d, delay: 0.32 + i * 0.06 }}
+                  >
+                    <i /> {chipText}
+                  </motion.span>
+                )
+              )}
             </motion.div>
           </div>
         </motion.section>
@@ -828,16 +852,14 @@ const Home = () => {
             </p>
           </header>
 
+          {/* === Cards estáticas existentes (no modificadas) === */}
           <div className="columns is-variable is-6 is-multiline">
             {[
               { t: t.package1Title, d: t.package1Desc, b: t.package1Bullets },
               { t: t.package2Title, d: t.package2Desc, b: t.package2Bullets, hl: true },
               { t: t.package3Title, d: t.package3Desc, b: t.package3Bullets },
             ].map((card, idx) => (
-              <div
-                key={card.t}
-                className="column is-12-mobile is-6-tablet is-4-desktop"
-              >
+              <div key={card.t} className="column is-12-mobile is-6-tablet is-4-desktop">
                 <motion.article
                   className={`service-tilt card-weird p-5 soft-edges`}
                   initial={{ opacity: 0, y: prefersReduced ? 0 : 30 }}
@@ -906,6 +928,59 @@ const Home = () => {
                 </motion.article>
               </div>
             ))}
+          </div>
+
+          {/* === NUEVO: listado traído desde Firestore (no altera lo anterior) === */}
+          <div style={{ marginTop: "2.5rem", textAlign: "left" }}>
+            <h3 className="title is-4" style={{ marginBottom: ".75rem" }}>
+              {t.fetchedServicesTitle}
+            </h3>
+
+            {loadingServices ? (
+              <div style={{ padding: 12 }}>{t.loadingServices}</div>
+            ) : services.length === 0 ? (
+              <p style={{ color: "var(--muted)" }}>{t.noServices}</p>
+            ) : (
+              <ul
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+                  gap: "12px",
+                  listStyle: "none",
+                  padding: 0,
+                  margin: 0,
+                }}
+              >
+                {services.map((s) => (
+                  <li
+                    key={s.id}
+                    className="soft-edges"
+                    style={{
+                      borderRadius: 14,
+                      padding: 14,
+                      background: "color-mix(in srgb,var(--panel-glass) 70%, transparent)",
+                      boxShadow: "0 14px 40px var(--shadow)",
+                      border: "none",
+                    }}
+                  >
+                    <h4 className="title is-5" style={{ margin: 0 }}>
+                      {s.title}
+                    </h4>
+                    {s.description && (
+                      <p style={{ marginTop: 8, color: "var(--muted)" }}>{s.description}</p>
+                    )}
+                    {typeof s.price === "number" && (
+                      <p style={{ marginTop: 6 }}>
+                        {t.price}: ${s.price}
+                      </p>
+                    )}
+                    {s.active === false && (
+                      <span style={{ color: "tomato", fontSize: 12 }}>{t.inactive}</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </section>
 
@@ -1006,10 +1081,7 @@ const Home = () => {
           <div className="scene-3d">
             <div className="columns is-multiline is-variable is-5">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div
-                  key={i}
-                  className="column is-12-mobile is-6-tablet is-4-desktop"
-                >
+                <div key={i} className="column is-12-mobile is-6-tablet is-4-desktop">
                   <motion.article
                     className="card-neo p-5 soft-edges"
                     initial={{
@@ -1045,9 +1117,7 @@ const Home = () => {
                       );
                     }}
                   >
-                    <p className="title is-5">
-                      {t.projectsTitle.replace("{i}", i)}
-                    </p>
+                    <p className="title is-5">{t.projectsTitle.replace("{i}", i)}</p>
                     <p style={{ color: "var(--muted)" }}>
                       {t.projectDesc.replace("{i}", i)}
                     </p>
