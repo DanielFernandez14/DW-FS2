@@ -14,9 +14,9 @@ const Home = () => {
       heroTitle: "Desarrollamos tus ideas y las hacemos tu web.",
       heroSub:
         "En Danco Web, tu visión es nuestra misión. Performance real, código limpio y respeto por tu tema.",
-      servicesTitle: "Paquetes de alto impacto",
+      servicesTitle: "Desarrollo de sitios web a medida",
       servicesSub:
-        "Plantillas listas, customización full-stack y optimización para growth — con estética metalizada y DX impecable.",
+        "Como desarrollador web Full Stack ofrezco los siguientes servicios web.",
       package1Title: "Paquete Básico UX/UI",
       package1Desc:
         "Plantilla base con diseño responsive, prototipos y accesibilidad AA.",
@@ -45,11 +45,11 @@ const Home = () => {
       projectDesc: "Plantilla {i} + customización. CWV alto y SEO técnico.",
       ctaTitle: "¿Listo para comprar tu sitio?",
       ctaSub:
-        "Elige un paquete y personalízalo. Soluciones claras, escalables y con look metalizado.",
-      ctaButton1: "Comprar ahora",
+        "Elegí la web que necesitas para vos o tu empresa",
+      ctaButton1: "Consultar ahora",
       ctaButton2: "Charlar 15'",
       contact: "Contacto",
-      services: "Ver paquetes",
+      services: "Productos",
       start: "Empezar",
       consult: "Consultar",
       view: "Ver demo",
@@ -255,7 +255,6 @@ const Home = () => {
           box-shadow: var(--shadow-xl);
           backdrop-filter: blur(10px) saturate(120%);
         }
-        /* Ocultamos líneas: sin border, sólo glow difuso */
         .hero.is-neo { border: none; }
         .hero.is-neo::before{
           content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
@@ -310,7 +309,7 @@ const Home = () => {
             radial-gradient(1000px 350px at 85% -10%, color-mix(in srgb, var(--accent2) 10%, transparent), transparent 70%),
             radial-gradient(1000px 350px at 10% -15%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 70%);
           backdrop-filter: blur(10px) saturate(120%);
-          border: none; /* sin líneas */
+          border: none;
         }
         .section-flow::before{
           content:""; position:absolute; inset:0; pointer-events:none;
@@ -318,12 +317,10 @@ const Home = () => {
           mix-blend-mode: screen; opacity:.35;
           mask-image: linear-gradient(180deg, transparent, #000 10% 90%, transparent);
         }
-        .section-flow.soft-edges{} /* marcador para lectura */
+        .section-flow.soft-edges{}
 
-        /* Stack 3D para tarjetas raras (UX/funcional) */
         .scene-3d{ perspective: 1200px; transform-style: preserve-3d; }
 
-        /* Tarjeta "weird" (se mantiene para servicios) */
         .card-weird{
           position:relative; border-radius: 16px; overflow:hidden;
           background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 6%, transparent), transparent 55%),
@@ -331,7 +328,7 @@ const Home = () => {
           transform-style: preserve-3d;
           will-change: transform, filter;
           transition: filter .2s ease, box-shadow .2s ease, transform .2s ease;
-          border: none; /* sin líneas */
+          border: none;
           box-shadow: 0 22px 64px var(--shadow);
           backdrop-filter: blur(10px) saturate(120%);
         }
@@ -345,7 +342,6 @@ const Home = () => {
         @keyframes orbit{ to{ transform: translate3d(0,0,80px) rotate(360deg) } }
         .card-weird:hover{ filter: saturate(1.05); box-shadow: 0 28px 80px color-mix(in srgb, var(--accent) 35%, transparent); transform: translateY(-4px); }
 
-        /* === NUEVA tarjeta para "Plantillas recientes" (efecto pro + botón) === */
         .card-neo{
           position:relative; border-radius:18px; overflow:hidden;
           background:
@@ -368,19 +364,15 @@ const Home = () => {
           box-shadow: 0 38px 120px color-mix(in srgb, var(--accent2) 30%, transparent);
           filter: brightness(1.03) saturate(1.04);
         }
-        .card-neo .cta{
-          display:inline-flex; align-items:center; gap:.5rem;
-          margin-top: .9rem;
-        }
+        .card-neo .cta{ display:inline-flex; align-items:center; gap:.5rem; margin-top: .9rem; }
 
-        /* Terminal */
         .terminal{
           background: radial-gradient(900px 400px at 80% -20%, color-mix(in srgb, var(--accent2) 14%, transparent), transparent),
                       color-mix(in srgb, var(--bg) 92%, var(--text) 8%);
           border-radius:14px; padding: 1rem 1.1rem; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
           color: var(--text); position:relative; overflow:hidden;
           box-shadow: 0 18px 50px var(--shadow);
-          border: none; /* sin líneas */
+          border: none;
           backdrop-filter: blur(8px) saturate(120%);
         }
         .terminal .dot{ width:.7rem; height:.7rem; border-radius:50%; }
@@ -408,38 +400,15 @@ const Home = () => {
         .btn-accent:hover{ transform: translateY(-2px); filter:saturate(1.06); box-shadow: 0 20px 50px color-mix(in srgb, var(--accent) 50%, transparent); }
         .btn-ghost{
           background: color-mix(in srgb, var(--panel-glass) 60%, transparent);
-          color: var(--text); border: none; /* sin líneas */
+          color: var(--text); border: none;
           transition: transform .15s ease, filter .15s ease;
-          box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+          box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.54);
         }
         .btn-ghost:hover{ transform: translateY(-2px); filter: brightness(1.05); }
 
         .brand-sub{ color: var(--muted) }
         .contact-highlight{ outline: 2px solid transparent; border-radius: 16px; }
 
-        /* ====== SALUDO ====== */
-        .greet-wrap{
-          position: relative;
-          margin-inline: auto;
-          width: min(96vw, 1100px);
-          max-width: 100%;
-          box-sizing: border-box;
-          justify-content: center;
-          text-align: center;
-          padding: clamp(1rem, 5vw, 5rem) clamp(1.2rem, 7vw, 8rem);
-          overflow: hidden;
-          backdrop-filter: blur(6px);
-        }
-        .greet-wrap::after{
-          content:"";
-          position:absolute; inset:0; pointer-events:none;
-          background: linear-gradient(90deg, transparent 0, rgba(255,255,255,.16) 50%, transparent 100%);
-          mix-blend-mode: screen;
-          width: 40%;
-          left:-40%;
-          animation: greetSweep 3.2s ease-in-out infinite;
-          opacity:.35;
-        }
         @keyframes greetSweep{
           0%{ transform: skewX(-12deg) translateX(0) }
           60%{ transform: skewX(-12deg) translateX(320%) }
@@ -448,16 +417,16 @@ const Home = () => {
 
         /* Typewriter responsive */
         .greet-wrap > div{ min-width: 0; }
-
+        
         .hero-greet{
-          --ls: .04em;
+          --ls: .2em;
           --safety: .9ch;
           font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
           font-weight: 800;
           line-height: 1.52;
-          font-size: clamp(2rem, 5vw, 5rem);
+          font-size: clamp(3rem, 5vw, 5rem);
           letter-spacing: var(--ls);
-          text-shadow: 0 2px 20px color-mix(in srgb, var(--accent) 40%, transparent);
+          text-shadow: 0 2px 20px color-mix(in srgb, var(--accent) 5%, transparent);
           white-space: nowrap;
           display: inline-block;
           width: clamp(0px,
@@ -472,13 +441,13 @@ const Home = () => {
         }
 
         .hero-greet::after{
-          content:"";
+          content: "";
           position:absolute; top:0; bottom:0; left:-15%;
           width: 15%;
-          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.09), transparent);
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
           mix-blend-mode: screen;
           animation: greetShine 3.8s linear infinite;
-          opacity:.45;
+          opacity:.35;
         }
         @keyframes greetShine{
           0%{ transform: translateX(0) }
@@ -513,7 +482,6 @@ const Home = () => {
           [data-speed]{ transform:none !important }
         }
 
-        /* Ajuste de paddings del héroe (sin bordes visibles) */
         .hero.is-neo .hero-body{
           padding-top: clamp(7rem, 6vh, 2rem);
           padding-bottom: clamp(7rem, 5vh, 1.2rem);
@@ -537,7 +505,7 @@ const Home = () => {
           background: color-mix(in srgb,var(--panel-glass) 75%,transparent);
           backdrop-filter: blur(10px) saturate(120%);
           transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
-          border: none; /* sin líneas */
+          border: none;
           box-shadow: 0 14px 40px var(--shadow);
         }
         .service-tilt:hover{
@@ -583,6 +551,51 @@ const Home = () => {
           .title.is-3{ font-size: clamp(1.8rem, 6vw, 2.2rem); }
           .subtitle.is-5{ font-size: clamp(1rem, 4vw, 1.1rem); }
         }
+
+        /* ====== SOLO CAMBIO SOLICITADO: título + logo a la derecha ====== */
+        .hero-title-row{
+          display:flex;
+          flex-direction: column;         /* mobile first: stack */
+          align-items: center;
+          gap: 12px;
+        }
+        @media (min-width: 768px){
+          .hero-title-row{
+            flex-direction: row;          /* desktop: lado a lado */
+            justify-content: center;
+            gap: clamp(12px, 3vw, 28px);
+          }
+          .hero-title-row .title{ margin: 0; } /* sin saltos extra */
+        }
+
+        /* Tamaño del logo: el mismo que definimos antes */
+        .hero-logo{
+          display:block;
+          width: clamp(140px, 26vw, 320px);
+          height: auto;
+          max-width: 100%;
+          object-fit: contain;
+          filter: drop-shadow(0 6px 24px color-mix(in srgb, var(--accent) 20%, transparent));
+        }
+        @media (max-width: 480px){
+          .hero-logo{ width: clamp(120px, 45vw, 220px); }
+        }
+        @media (min-width: 1400px){
+          .hero-logo{ width: 360px; }
+        }
+          @media (max-width: 768px) {
+  .page-wrap {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+#servicios {
+  scroll-margin-top: 80px; /* Ajustá este valor a la altura de tu header/navbar */
+}
+
       `}</style>
 
       {/* Fondo unificado global */}
@@ -622,7 +635,7 @@ const Home = () => {
           <div className="rain2" />
 
           <div className="hero-body has-text-centered">
-            {/* Bienvenido + caret */}
+            {/* ¡Bienvenido! (sin tocar) */}
             <motion.div
               className="greet-wrap"
               initial={{ opacity: 0, y: prefersReduced ? 0 : 10 }}
@@ -657,7 +670,7 @@ const Home = () => {
                   className="hero-greet"
                   style={{ ["--hn"]: 0 }}
                 >
-                  {heroTitle}
+                  {t.welcome}
                 </motion.span>
                 {!prefersReduced && (
                   <motion.span
@@ -670,28 +683,33 @@ const Home = () => {
               </div>
             </motion.div>
 
-            {/* Subtítulo principal */}
-            <motion.h1
-              className="title glitch mt-4"
-              data-text={t.heroTitle}
-              initial={{ opacity: 0, y: prefersReduced ? 0 : 14 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: d, ease, delay: 0.08 }}
-              style={{
-                fontSize: "clamp(1.6rem, 4.5vw, 3rem)",
-                fontWeight: 800,
-                lineHeight: 1.2,
-                background:
-                  "linear-gradient(90deg, var(--text), color-mix(in srgb,var(--accent) 16%, var(--text)) 40%, var(--text))",
-                WebkitBackgroundClip: "text",
-                color: "transparent",
-                textShadow:
-                  "0 6px 30px color-mix(in srgb, var(--accent) 26%, transparent)",
-              }}
-            >
-              {t.heroTitle}
-            </motion.h1>
+            {/* === Título + Logo a la derecha (único cambio) === */}
+            <div className="hero-title-row">
+              <img src="/Danco/danco.png" alt="danco" className="hero-logo" />
+              <motion.h1
+                className="title glitch mt-4"
+                data-text={t.heroTitle}
+                initial={{ opacity: 0, y: prefersReduced ? 0 : 14 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: d, ease, delay: 0.08 }}
+                style={{
+                  fontSize: "clamp(1.6rem, 4.5vw, 3rem)",
+                  fontWeight: 800,
+                  lineHeight: 1.2,
+                  background:
+                    "linear-gradient(90deg, var(--text), color-mix(in srgb,var(--accent) 16%, var(--text)) 40%, var(--text))",
+                  WebkitBackgroundClip: "text",
+                  color: "transparent",
+                  textShadow:
+                    "0 6px 30px color-mix(in srgb, var(--accent) 26%, transparent)",
+                }}
+              >
+                {t.heroTitle}
+              </motion.h1>
+
+              
+            </div>
 
             {/* Texto debajo */}
             <motion.p
@@ -753,10 +771,10 @@ const Home = () => {
               transition={{ duration: d, delay: 0.3 }}
             >
               {[
-                "Core Web Vitals",
-                "SEO Técnico",
-                "UI metalizada",
-                "Accesibilidad",
+                "Seguridad",
+                "Confianza",
+                "Personalización",
+                "Garantía",
               ].map((chipText, i) => (
                 <motion.span
                   key={chipText}
@@ -797,22 +815,9 @@ const Home = () => {
 
           <div className="columns is-variable is-6 is-multiline">
             {[
-              {
-                t: t.package1Title,
-                d: t.package1Desc,
-                b: t.package1Bullets,
-              },
-              {
-                t: t.package2Title,
-                d: t.package2Desc,
-                b: t.package2Bullets,
-                hl: true,
-              },
-              {
-                t: t.package3Title,
-                d: t.package3Desc,
-                b: t.package3Bullets,
-              },
+              { t: t.package1Title, d: t.package1Desc, b: t.package1Bullets },
+              { t: t.package2Title, d: t.package2Desc, b: t.package2Bullets, hl: true },
+              { t: t.package3Title, d: t.package3Desc, b: t.package3Bullets },
             ].map((card, idx) => (
               <div
                 key={card.t}
@@ -1018,7 +1023,6 @@ const Home = () => {
                     }
                     onViewportEnter={(entry) => {
                       if (prefersReduced) return;
-                      // giro suave de presentación
                       animate(
                         entry.target,
                         { rotateY: [0, 12, 0] },
