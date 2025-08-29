@@ -1,17 +1,18 @@
 // src/pages/Home.jsx
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo, useCallback, memo } from "react";
 import { Layout } from "../components/Layout";
 import { motion, useReducedMotion } from "motion/react";
 import { animate } from "motion";
 import { getAllServices /*, subscribeServices*/ } from "../services/service";
 
-const Home = () => {
+const HomeBase = () => {
   const prefersReduced = useReducedMotion();
   const [lang, setLang] = useState("es"); // 'es' por defecto
 
   // === NUEVO: estado para CRUD Firestore (no modifica nada más) ===
   const [services, setServices] = useState([]);
   const [loadingServices, setLoadingServices] = useState(true);
+
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -34,153 +35,181 @@ const Home = () => {
   //   return () => unsub();
   // }, []);
 
-  const texts = {
-    es: {
-      welcome: "¡Bienvenido!",
-      heroTitle: "Desarrollamos tus ideas y las hacemos tu web.",
-      heroSub:
-        "En Danco Web, tu visión es nuestra misión. Performance real, código limpio y respeto por tu tema.",
-      servicesTitle: "Desarrollo de sitios web a medida",
-      servicesSub:
-        "Como desarrollador web Full Stack ofrezco los siguientes servicios web.",
-      package1Title: "Paquete Básico UX/UI",
-      package1Desc:
-        "Plantilla base con diseño responsive, prototipos y accesibilidad AA.",
-      package1Bullets: ["Design System Básico", "Prototipado Rápido", "Accesibilidad AA"],
-      package2Title: "Paquete Premium Full-Stack",
-      package2Desc:
-        "Plantilla avanzada + APIs integradas. Seguridad, testing y deployment.",
-      package2Bullets: ["SPA/SSR Premium", "APIs REST/DB", "CI/CD + Observabilidad"],
-      package3Title: "Paquete E-commerce & Growth",
-      package3Desc:
-        "Plantilla para tiendas con SEO, CWV y herramientas de growth.",
-      package3Bullets: ["Core Web Vitals", "GTM + Analytics", "Contenido Optimizado"],
-      pipelineTitle: "Pipeline de compra claro",
-      pipelineSub:
-        "De la selección a la entrega con customización, métricas y accesibilidad incluida.",
-      pipelineChips: ["Lighthouse 95+", "A11y AA", "Latency Baja", "SEO Técnico"],
-      pipelineButton: "Hablemos",
-      terminalCode:
-        "$ npx buy-dancoweb-template\n✔ Generando stack (Bulma + Motion + A11y)...\n✔ Configurando personalización y CWV...\n✔ Desplegando tu sitio...",
-      terminalTyper: "ready: tienda optimizada y metalizada ⚡",
-      projectsTitle: "Plantillas recientes",
-      projectDesc: "Plantilla {i} + customización. CWV alto y SEO técnico.",
-      ctaTitle: "¿Listo para comprar tu sitio?",
-      ctaSub: "Elegí la web que necesitas para vos o tu empresa",
-      ctaButton1: "Consultar ahora",
-      ctaButton2: "Charlar 15'",
-      contact: "Contacto",
-      services: "Productos",
-      start: "Empezar",
-      consult: "Consultar",
-      view: "Ver demo",
-      fetchedServicesTitle: "Servicios cargados (desde la base de datos)",
-      noServices: "No hay servicios cargados aún.",
-      loadingServices: "Cargando servicios…",
-      price: "Precio",
-      inactive: "Inactivo",
-    },
-    en: {
-      welcome: "Welcome!",
-      heroTitle: "Buy your ready and customized website.",
-      heroSub:
-        "At DancoWeb Store, choose premium templates, customize them and go online with optimal performance and metallic design.",
-      servicesTitle: "High-impact Packages",
-      servicesSub:
-        "Ready templates, full-stack customization and growth optimization — with metallic aesthetics and impeccable DX.",
-      package1Title: "Basic UX/UI Package",
-      package1Desc:
-        "Base template with responsive design, prototypes and AA accessibility.",
-      package1Bullets: ["Basic Design System", "Rapid Prototyping", "AA Accessibility"],
-      package2Title: "Premium Full-Stack Package",
-      package2Desc:
-        "Advanced template + integrated APIs. Security, testing and deployment.",
-      package2Bullets: ["Premium SPA/SSR", "REST/DB APIs", "CI/CD + Observability"],
-      package3Title: "E-commerce & Growth Package",
-      package3Desc: "Store template with SEO, CWV and growth tools.",
-      package3Bullets: ["Core Web Vitals", "GTM + Analytics", "Optimized Content"],
-      pipelineTitle: "Clear Purchase Pipeline",
-      pipelineSub:
-        "From selection to delivery with customization, metrics and included accessibility.",
-      pipelineChips: ["Lighthouse 95+", "A11y AA", "Low Latency", "Technical SEO"],
-      pipelineButton: "Let's Talk",
-      terminalCode:
-        "$ npx buy-dancoweb-template\n✔ Generating stack (Bulma + Motion + A11y)...\n✔ Setting up customization and CWV...\n✔ Deploying your site...",
-      terminalTyper: "ready: optimized and metallized store ⚡",
-      projectsTitle: "Recent Templates",
-      projectDesc: "Template {i} + customization. High CWV and technical SEO.",
-      ctaTitle: "Ready to buy your site?",
-      ctaSub:
-        "Choose a package and customize it. Clear, scalable solutions with metallic look.",
-      ctaButton1: "Buy Now",
-      ctaButton2: "Chat 15'",
-      contact: "Contact",
-      services: "View Packages",
-      start: "Start",
-      consult: "Consult",
-      view: "View demo",
-      fetchedServicesTitle: "Loaded services (from database)",
-      noServices: "There are no services yet.",
-      loadingServices: "Loading services…",
-      price: "Price",
-      inactive: "Inactive",
-    },
-  };
+  const texts = useMemo(
+    () => ({
+      es: {
+        welcome: "¡Bienvenido!",
+        heroTitle: "Desarrollamos tus ideas y las hacemos tu web.",
+        heroSub:
+          "En Danco Web, tu visión es nuestra misión. Performance real, código limpio y respeto por tu tema.",
+        servicesTitle: "Desarrollo de sitios web a medida",
+        servicesSub:
+          "Como desarrollador web Full Stack ofrezco los siguientes servicios web.",
+        package1Title: "Paquete Básico UX/UI",
+        package1Desc:
+          "Plantilla base con diseño responsive, prototipos y accesibilidad AA.",
+        package1Bullets: ["Design System Básico", "Prototipado Rápido", "Accesibilidad AA"],
+        package2Title: "Paquete Premium Full-Stack",
+        package2Desc:
+          "Plantilla avanzada + APIs integradas. Seguridad, testing y deployment.",
+        package2Bullets: ["SPA/SSR Premium", "APIs REST/DB", "CI/CD + Observabilidad"],
+        package3Title: "Paquete E-commerce & Growth",
+        package3Desc:
+          "Plantilla para tiendas con SEO, CWV y herramientas de growth.",
+        package3Bullets: ["Core Web Vitals", "GTM + Analytics", "Contenido Optimizado"],
+        pipelineTitle: "Pipeline de compra claro",
+        pipelineSub:
+          "De la selección a la entrega con customización, métricas y accesibilidad incluida.",
+        pipelineChips: ["Lighthouse 95+", "A11y AA", "Latency Baja", "SEO Técnico"],
+        pipelineButton: "Hablemos",
+        terminalCode:
+          "$ npx buy-dancoweb-template\n✔ Generando stack (Bulma + Motion + A11y)...\n✔ Configurando personalización y CWV...\n✔ Desplegando tu sitio...",
+        terminalTyper: "ready: tienda optimizada y metalizada ⚡",
+        projectsTitle: "Plantillas recientes",
+        projectDesc: "Plantilla {i} + customización. CWV alto y SEO técnico.",
+        ctaTitle: "¿Listo para comprar tu sitio?",
+        ctaSub: "Elegí la web que necesitas para vos o tu empresa",
+        ctaButton1: "Consultar ahora",
+        ctaButton2: "Charlar 15'",
+        contact: "Contacto",
+        services: "Productos",
+        start: "Empezar",
+        consult: "Consultar",
+        view: "Ver demo",
+        fetchedServicesTitle: "Servicios cargados (desde la base de datos)",
+        noServices: "No hay servicios cargados aún.",
+        loadingServices: "Cargando servicios…",
+        price: "Precio",
+        inactive: "Inactivo",
+      },
+      en: {
+        welcome: "Welcome!",
+        heroTitle: "Buy your ready and customized website.",
+        heroSub:
+          "At DancoWeb Store, choose premium templates, customize them and go online with optimal performance and metallic design.",
+        servicesTitle: "High-impact Packages",
+        servicesSub:
+          "Ready templates, full-stack customization and growth optimization — with metallic aesthetics and impeccable DX.",
+        package1Title: "Basic UX/UI Package",
+        package1Desc:
+          "Base template with responsive design, prototypes and AA accessibility.",
+        package1Bullets: ["Basic Design System", "Rapid Prototyping", "AA Accessibility"],
+        package2Title: "Premium Full-Stack Package",
+        package2Desc:
+          "Advanced template + integrated APIs. Security, testing and deployment.",
+        package2Bullets: ["Premium SPA/SSR", "REST/DB APIs", "CI/CD + Observability"],
+        package3Title: "E-commerce & Growth Package",
+        package3Desc: "Store template with SEO, CWV and growth tools.",
+        package3Bullets: ["Core Web Vitals", "GTM + Analytics", "Optimized Content"],
+        pipelineTitle: "Clear Purchase Pipeline",
+        pipelineSub:
+          "From selection to delivery with customization, metrics and included accessibility.",
+        pipelineChips: ["Lighthouse 95+", "A11y AA", "Low Latency", "Technical SEO"],
+        pipelineButton: "Let's Talk",
+        terminalCode:
+          "$ npx buy-dancoweb-template\n✔ Generating stack (Bulma + Motion + A11y)...\n✔ Setting up customization and CWV...\n✔ Deploying your site...",
+        terminalTyper: "ready: optimized and metallized store ⚡",
+        projectsTitle: "Recent Templates",
+        projectDesc: "Template {i} + customization. High CWV and technical SEO.",
+        ctaTitle: "Ready to buy your site?",
+        ctaSub:
+          "Choose a package and customize it. Clear, scalable solutions with metallic look.",
+        ctaButton1: "Buy Now",
+        ctaButton2: "Chat 15'",
+        contact: "Contact",
+        services: "View Packages",
+        start: "Start",
+        consult: "Consult",
+        view: "View demo",
+        fetchedServicesTitle: "Loaded services (from database)",
+        noServices: "There are no services yet.",
+        loadingServices: "Loading services…",
+        price: "Price",
+        inactive: "Inactive",
+      },
+    }),
+    []
+  );
 
   const t = texts[lang];
 
-  /* ========= Parallax súper fluido (rAF + lerp) ========= */
+  /* ========= Parallax súper fluido (rAF + lerp) — on-demand ========= */
   useEffect(() => {
     if (prefersReduced) return;
     const layers = Array.from(document.querySelectorAll("[data-speed]"));
+    if (layers.length === 0) return;
+
     let currentY = window.scrollY;
     let targetY = currentY;
     let rafId = 0;
+    let idleTimer = 0;
 
-    const onScroll = () => (targetY = window.scrollY);
     const loop = () => {
+      rafId = 0; // marcar libre
       currentY += (targetY - currentY) * 0.14; // inercia
       for (const el of layers) {
         const speed = parseFloat(el.getAttribute("data-speed") || "0");
         el.style.transform = `translate3d(0, ${currentY * speed}px, 0)`;
       }
-      rafId = requestAnimationFrame(loop);
+      // si se estabilizó, cortar; si no, seguir
+      if (Math.abs(targetY - currentY) > 0.1) {
+        rafId = requestAnimationFrame(loop);
+      } else {
+        // apagar del todo tras un pequeño idle
+        idleTimer = window.setTimeout(() => {
+          // no-op: dejamos todo quieto sin rAF activo
+        }, 80);
+      }
+    };
+
+    const onScroll = () => {
+      targetY = window.scrollY;
+      if (idleTimer) {
+        clearTimeout(idleTimer);
+        idleTimer = 0;
+      }
+      if (!rafId) rafId = requestAnimationFrame(loop);
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
-    rafId = requestAnimationFrame(loop);
+    // primer render: no arrancamos el rAF hasta que el usuario scrollee
+
     return () => {
       window.removeEventListener("scroll", onScroll);
-      cancelAnimationFrame(rafId);
+      if (rafId) cancelAnimationFrame(rafId);
+      if (idleTimer) clearTimeout(idleTimer);
     };
   }, [prefersReduced]);
 
-  /* ========= Scroll al footer de contacto + highlight ========= */
-  const handleGoContact = (e) => {
-    if (e) e.preventDefault();
-    const target = document.querySelector("#contacto") || document.querySelector("footer");
-    if (!target) return;
+  /* ========= Scroll al footer de contacto + highlight (memo) ========= */
+  const handleGoContact = useCallback(
+    (e) => {
+      if (e) e.preventDefault();
+      const target = document.querySelector("#contacto") || document.querySelector("footer");
+      if (!target) return;
 
-    if (prefersReduced) {
-      target.scrollIntoView({ behavior: "instant", block: "start" });
-      return;
-    }
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (prefersReduced) {
+        target.scrollIntoView({ behavior: "instant", block: "start" });
+        return;
+      }
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
 
-    const focusEl =
-      target.querySelector(".ft-form") || target.querySelector("form") || target;
-    focusEl.classList.add("contact-highlight");
-    animate(
-      focusEl,
-      {
-        outlineColor: ["transparent", "var(--accent)", "transparent"],
-        outlineOffset: [0, 6, 0],
-        scale: [1, 1.02, 1],
-        filter: ["brightness(1)", "brightness(1.06)", "brightness(1)"],
-      },
-      { duration: 1.1, easing: "ease-out" }
-    ).finished.then(() => focusEl.classList.remove("contact-highlight"));
-  };
+      const focusEl =
+        target.querySelector(".ft-form") || target.querySelector("form") || target;
+      focusEl.classList.add("contact-highlight");
+      animate(
+        focusEl,
+        {
+          outlineColor: ["transparent", "var(--accent)", "transparent"],
+          outlineOffset: [0, 6, 0],
+          scale: [1, 1.02, 1],
+          filter: ["brightness(1)", "brightness(1.06)", "brightness(1)"],
+        },
+        { duration: 1.1, easing: "ease-out" }
+      ).finished.then(() => focusEl.classList.remove("contact-highlight"));
+    },
+    [prefersReduced]
+  );
 
   /* ========= Typewriter para terminal ========= */
   const typerRef = useRef(null);
@@ -189,22 +218,24 @@ const Home = () => {
     const el = typerRef.current;
     if (!el) return;
     const full = el.getAttribute("data-text") || "";
-    let i = 0,
-      cancel = false;
+    let i = 0;
+    let cancelled = false;
+
     const tick = () => {
-      if (cancel) return;
+      if (cancelled) return;
       el.textContent = full.slice(0, i++);
       if (i <= full.length) setTimeout(tick, i < 6 ? 50 : 22);
     };
     tick();
+
     return () => {
-      cancel = true;
+      cancelled = true;
     };
   }, [prefersReduced, lang]); // Re-run on lang change
 
   /* ========= Typewriter para “Bienvenido a DancoWeb” ========= */
   const heroTitle = t.welcome;
-  const heroChars = heroTitle.length;
+  const heroChars = useMemo(() => heroTitle.length, [heroTitle]);
   const heroRef = useRef(null);
   useEffect(() => {
     const el = heroRef.current;
@@ -219,7 +250,7 @@ const Home = () => {
       { duration: 2.2, easing: `steps(${heroChars})`, delay: 0.25 }
     );
     return () => controls?.cancel();
-  }, [prefersReduced, heroTitle]); // Re-run on lang/title change
+  }, [prefersReduced, heroChars]);
 
   const d = prefersReduced ? 0 : 0.6;
   const ease = [0.22, 1, 0.36, 1];
@@ -439,10 +470,9 @@ const Home = () => {
         .brand-sub{ color: var(--muted) }
         .contact-highlight{ outline: 2px solid transparent; border-radius: 16px; }
 
-        @keyframes greetSweep{
-          0%{ transform: skewX(-12deg) translateX(0) }
-          60%{ transform: skewX(-12deg) translateX(320%) }
-          100%{ transform: skewX(-12deg) translateX(320%) }
+        @keyframes greetShine{
+          0%{ transform: translateX(0) }
+          100%{ transform: translateX(700%) }
         }
 
         /* Typewriter responsive */
@@ -478,10 +508,6 @@ const Home = () => {
           mix-blend-mode: screen;
           animation: greetShine 3.8s linear infinite;
           opacity:.35;
-        }
-        @keyframes greetShine{
-          0%{ transform: translateX(0) }
-          100%{ transform: translateX(700%) }
         }
 
         .caret-hero{
@@ -655,12 +681,14 @@ const Home = () => {
           <button
             className={`lang-btn ${lang === "es" ? "active" : ""}`}
             onClick={() => setLang("es")}
+            aria-pressed={lang === "es"}
           >
             ES
           </button>
           <button
             className={`lang-btn ${lang === "en" ? "active" : ""}`}
             onClick={() => setLang("en")}
+            aria-pressed={lang === "en"}
           >
             EN
           </button>
@@ -683,7 +711,13 @@ const Home = () => {
           <div className="hero-body has-text-centered">
             {/* === FILA: IMG (izq desk / arriba mobile) + BIENVENIDO (der desk / abajo mobile) === */}
             <div className="hero-media-row">
-              <img src="/SVG/danco-embedded.svg" alt="danco" className="hero-logo" />
+              <img
+                src="/SVG/danco-embedded.svg"
+                alt="danco"
+                className="hero-logo"
+                loading="lazy"
+                decoding="async"
+              />
               <motion.div
                 className="greet-wrap"
                 initial={{ opacity: 0, y: prefersReduced ? 0 : 10 }}
@@ -812,20 +846,18 @@ const Home = () => {
               viewport={{ once: true }}
               transition={{ duration: d, delay: 0.3 }}
             >
-              {["Seguridad", "Confianza", "Personalización", "Garantía"].map(
-                (chipText, i) => (
-                  <motion.span
-                    key={chipText}
-                    className="chip"
-                    initial={{ opacity: 0, y: prefersReduced ? 0 : 8 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: d, delay: 0.32 + i * 0.06 }}
-                  >
-                    <i /> {chipText}
-                  </motion.span>
-                )
-              )}
+              {["Seguridad", "Confianza", "Personalización", "Garantía"].map((chipText, i) => (
+                <motion.span
+                  key={chipText}
+                  className="chip"
+                  initial={{ opacity: 0, y: prefersReduced ? 0 : 8 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: d, delay: 0.32 + i * 0.06 }}
+                >
+                  <i /> {chipText}
+                </motion.span>
+              ))}
             </motion.div>
           </div>
         </motion.section>
@@ -1194,4 +1226,5 @@ const Home = () => {
   );
 };
 
+const Home = memo(HomeBase);
 export { Home };
